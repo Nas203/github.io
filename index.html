@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sufyan301 — Roblox Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #C0392B;
+    --red-dark: #922b21;
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #1a1a1a;
+    --text: #f0f0f0;
+    --muted: #666;
+    --border: #222;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: auto; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--text);
+  }
+
+  .nav-logo span { color: var(--red); }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 60px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: 'SUFYAN';
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(120px, 20vw, 280px);
+    color: rgba(255,255,255,0.02);
+    letter-spacing: 10px;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--red);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 12vw, 160px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero-title .accent { color: var(--red); }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 14px 32px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+
+  .btn-primary {
+    background: var(--red);
+    color: white;
+  }
+
+  .btn-primary:hover { background: var(--red-dark); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-outline:hover { border-color: var(--muted); color: var(--text); }
+
+  .hero-stats {
+    position: absolute;
+    bottom: 60px;
+    right: 60px;
+    display: flex;
+    gap: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s 1s forwards;
+  }
+
+  .stat-item { text-align: right; }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: var(--red);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* RED LINE DIVIDER */
+  .red-line {
+    width: 60px;
+    height: 3px;
+    background: var(--red);
+    margin-bottom: 48px;
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 100px 60px;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--red);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 6vw, 72px);
+    letter-spacing: 2px;
+    line-height: 1;
+    margin-bottom: 48px;
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .about-text p {
+    font-size: 15px;
+    color: #aaa;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+
+  .about-text p:first-child { color: var(--text); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .skill-item {
+    background: var(--bg2);
+    padding: 16px 20px;
+    border-left: 2px solid transparent;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .skill-item:hover {
+    border-left-color: var(--red);
+    background: var(--bg3);
+  }
+
+  .skill-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    letter-spacing: 1px;
+  }
+
+  .skill-desc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* PROJECTS */
+  .project-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .project-card:hover { border-color: var(--red); }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 0;
+    background: var(--red);
+    transition: height 0.3s;
+  }
+
+  .project-card:hover::before { height: 100%; }
+
+  .project-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--red);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: pulse 2s infinite;
+  }
+
+  .project-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+
+  .project-desc {
+    font-size: 14px;
+    color: #888;
+    line-height: 1.8;
+    max-width: 600px;
+    margin-bottom: 32px;
+    font-weight: 300;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .project-number {
+    position: absolute;
+    bottom: 32px;
+    right: 48px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 80px;
+    color: rgba(255,255,255,0.03);
+    line-height: 1;
+  }
+
+  /* PRICING */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .price-card {
+    background: var(--bg2);
+    padding: 40px;
+    position: relative;
+    transition: background 0.2s;
+  }
+
+  .price-card:hover { background: var(--bg3); }
+
+  .price-card.featured {
+    background: var(--red);
+  }
+
+  .price-card.featured .price-amount,
+  .price-card.featured .price-label,
+  .price-card.featured .price-feature,
+  .price-card.featured .price-tier { color: white; }
+
+  .price-card.featured .price-feature { opacity: 0.85; }
+
+  .price-tier {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .price-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .price-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 32px;
+  }
+
+  .price-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+    margin-bottom: 24px;
+  }
+
+  .price-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  .price-feature {
+    font-size: 13px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 300;
+  }
+
+  .price-feature::before {
+    content: '—';
+    color: var(--red);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+  }
+
+  .price-card.featured .price-feature::before { color: rgba(255,255,255,0.6); }
+
+  .price-btn {
+    width: 100%;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 14px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .price-btn:hover { border-color: var(--text); color: var(--text); }
+
+  .price-card.featured .price-btn {
+    background: rgba(0,0,0,0.2);
+    border-color: rgba(255,255,255,0.3);
+    color: white;
+  }
+
+  .price-card.featured .price-btn:hover {
+    background: rgba(0,0,0,0.35);
+  }
+
+  /* CONTACT */
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .contact-text {
+    font-size: 15px;
+    color: #888;
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: var(--bg2);
+    text-decoration: none;
+    color: var(--text);
+    border-left: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .contact-link:hover {
+    border-left-color: var(--red);
+    background: var(--bg3);
+    padding-left: 32px;
+  }
+
+  .contact-link-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .contact-link-arrow {
+    color: var(--muted);
+    font-size: 18px;
+    transition: transform 0.2s, color 0.2s;
+  }
+
+  .contact-link:hover .contact-link-arrow {
+    transform: translateX(4px);
+    color: var(--red);
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 32px 60px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  .footer-text span { color: var(--red); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 80px; }
+    .hero-stats { position: static; margin-top: 48px; justify-content: flex-start; flex-wrap: wrap; gap: 32px; }
+    section { padding: 64px 24px; }
+    .about-grid, .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">S<span>.</span>301</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-tag">Roblox Developer — Open for commissions</div>
+  <h1 class="hero-title">
+    SUFYAN<br><span class="accent">301.</span>
+  </h1>
+  <p class="hero-sub">
+    4 years of scripting experience. I build game systems, economies, combat mechanics, and clean GUIs — all from scratch.
+  </p>
+  <div class="hero-cta">
+    <a href="#projects" class="btn btn-primary">View Work</a>
+    <a href="#contact" class="btn btn-outline">Hire Me</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Years exp.</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">39+</div>
+      <div class="stat-label">Scripts built</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">From scratch</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label">// 001 — About</div>
+  <h2 class="section-title reveal">WHO I AM</h2>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>I have been writing scripts in Roblox for around 4 years now, and during this period, I have managed to become quite proficient at creating functional systems within my games.</p>
+      <p>By functional systems, I mean things such as economies, DataStore saving systems, teams and roles, tax systems, salary loops – anything that can add realism and depth to a game. On top of being equally skilled on the server side and the client side, I know how to implement RemoteEvents and RemoteFunctions effectively.</p>
+      <p>Another part of game development that I love is creating GUIs through coding. Things like health bars, hunger bars, sidebar shops, pop-up messages, and even welcome screens. Every single thing that I create in a game is custom-coded and does not rely on any third-party plugins.</p>
+    </div>
+    <div class="skills-grid reveal">
+      <div class="skill-item">
+        <div class="skill-name">Server / Client</div>
+        <div class="skill-desc">RemoteEvents, RemoteFunctions</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Economy Systems</div>
+        <div class="skill-desc">Tax, salary, DataStore</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">GUI Scripting</div>
+        <div class="skill-desc">Custom UI, animations</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Combat Tools</div>
+        <div class="skill-desc">Swords, guns, hit detection</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Team / Roles</div>
+        <div class="skill-desc">Faction systems, permissions</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Admin Systems</div>
+        <div class="skill-desc">Commands, moderation tools</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Resource Loops</div>
+        <div class="skill-desc">Farming, fishing, crafting</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Tool Systems</div>
+        <div class="skill-desc">Role-locked, inventory mgmt</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label">// 002 — Projects</div>
+  <h2 class="section-title reveal">MY WORK</h2>
+  <div class="project-card reveal">
+    <div class="project-status">
+      <div class="status-dot"></div>
+      In Development
+    </div>
+    <div class="project-title">THE FACTIONS.</div>
+    <p class="project-desc">
+      An RPG involving faction wars that was made from scratch. Developer/owner – solely responsible for all 39+ scripts written for a player-run economy, team and class management, taxation and salary, entering of gates, owning houses, farming/fishing loops, a bounty/jail system, and full combat capabilities.
+    </p>
+    <div class="project-tags">
+      <span class="tag">Economy</span>
+      <span class="tag">Combat</span>
+      <span class="tag">Faction System</span>
+      <span class="tag">DataStore</span>
+      <span class="tag">Custom GUI</span>
+      <span class="tag">39+ Scripts</span>
+      <span class="tag">Lua</span>
+    </div>
+    <div class="project-number">01</div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-label">// 003 — Pricing</div>
+  <h2 class="section-title reveal">COMMISSIONS</h2>
+  <div class="pricing-grid reveal">
+
+    <div class="price-card">
+      <div class="price-tier">Average</div>
+      <div class="price-amount">10,000</div>
+      <div class="price-label">Robux</div>
+      <div class="price-divider"></div>
+      <ul class="price-features">
+        <li class="price-feature">Smooth, Intricate UI</li>
+        <li class="price-feature">Mid-Good systems</li>
+        <li class="price-feature">DataStore saving</li>
+        <li class="price-feature">Admin commands</li>
+        <li class="price-feature">Basic economy system</li>
+        <li class="price-feature">Up to 10 scripts</li>
+        <li class="price-feature">3 revisions included</li>
+        <li class="price-feature">Delivery within 3–4 weeks</li>
+      </ul>
+      <button class="price-btn" onclick="scrollToContact()">Get Started</button>
+    </div>
+
+    <div class="price-card featured">
+      <div class="price-tier">Pro</div>
+      <div class="price-amount">30,000</div>
+      <div class="price-label">Robux</div>
+      <div class="price-divider"></div>
+      <ul class="price-features">
+        <li class="price-feature">Everything in Average</li>
+        <li class="price-feature">Complex interconnected systems</li>
+        <li class="price-feature">Full economy + tax/salary</li>
+        <li class="price-feature">Tool systems & weapons</li>
+        <li class="price-feature">Unlimited revisions</li>
+        <li class="price-feature">Priority support</li>
+        <li class="price-feature">Delivery within 2 weeks</li>
+      </ul>
+      <button class="price-btn" onclick="scrollToContact()">Get Started</button>
+    </div>
+
+    <div class="price-card">
+      <div class="price-tier">Ultra</div>
+      <div class="price-amount">60,000</div>
+      <div class="price-label">Robux</div>
+      <div class="price-divider"></div>
+      <ul class="price-features">
+        <li class="price-feature">Everything in Pro</li>
+        <li class="price-feature">Multiple interacting systems</li>
+        <li class="price-feature">Post-delivery bug fixes</li>
+        <li class="price-feature">Full documentation</li>
+        <li class="price-feature">Priority queue</li>
+        <li class="price-feature">Daily progress updates</li>
+        <li class="price-feature">Ongoing support</li>
+      </ul>
+      <button class="price-btn" onclick="scrollToContact()">Get Started</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label">// 004 — Contact</div>
+  <h2 class="section-title reveal">GET IN TOUCH</h2>
+  <div class="contact-inner">
+    <div class="contact-text reveal">
+      <p>Looking for a scripter for your next project? I'm open to commissions and collaborations. DM me on Discord or find me on Roblox.</p>
+      <br>
+      <p>I respond within 24 hours and always communicate clearly throughout the project.</p>
+    </div>
+    <div class="contact-links reveal">
+      <a href="https://create.roblox.com/talent/creators/2384619474" target="_blank" class="contact-link">
+        <span class="contact-link-label">Roblox Portfolio</span>
+        <span class="contact-link-arrow">→</span>
+      </a>
+      <a href="#" class="contact-link">
+        <span class="contact-link-label">Discord — nas07784</span>
+        <span class="contact-link-arrow">→</span>
+      </a>
+      <a href="https://discord.gg/hd" target="_blank" class="contact-link">
+        <span class="contact-link-label">Hidden Devs</span>
+        <span class="contact-link-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-text">© 2026 <span>sufyan301</span> — All rights reserved</div>
+  <div class="footer-text">Built with <span>♥</span> and Lua</div>
+</footer>
+
+<script>
+  // Fast smooth scroll for nav links
+  function fastScroll(targetId, duration) {
+    const target = document.querySelector(targetId);
+    if (!target) return;
+    const start = window.scrollY;
+    const end = target.getBoundingClientRect().top + window.scrollY - 80;
+    const change = end - start;
+    const startTime = performance.now();
+
+    function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+    function step(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      window.scrollTo(0, start + change * ease(progress));
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function scrollToContact() { fastScroll('#contact', 400); }
+
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const href = link.getAttribute('href');
+      fastScroll(href, 500);
+      history.replaceState(null, null, ' ');
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
